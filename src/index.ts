@@ -119,7 +119,7 @@ export default class LoguxProcessor {
   }
 
   streamForRequest(request: LoguxRequest): Stream {
-    if (!request.version || this.version !== request.version) {
+    if (this.version !== request.version) {
       throw new NotAcceptable();
     }
     if (this.controlPassword !== request.password) {
