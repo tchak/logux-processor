@@ -1,0 +1,49 @@
+{
+  "name": "logux-processor",
+  "version": "0.1.0",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "description": "Logux processor for node servers",
+  "contributors": [
+    "Paul Chavard <github@paul.chavard.net>"
+  ],
+  "keywords": [
+    "logux"
+  ],
+  "repository": "https://github.com/tchak/logux-processor",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  },
+  "scripts": {
+    "build": "rm -rf ./dist && tsc",
+    "test": "qunit --require ts-node/register 'test/**/*-test.ts'",
+    "lint": "eslint . --ext .ts",
+    "prepare": "yarn build",
+    "release": "release-it"
+  },
+  "devDependencies": {
+    "@types/node": "^12.6.8",
+    "@types/node-fetch": "^2.5.0",
+    "@types/qunit": "^2.9.0",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2",
+    "qunit": "^2.9.2",
+    "release-it": "^12.3.4",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "release-it": {
+    "github": {
+      "release": false
+    }
+  }
+}
