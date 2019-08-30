@@ -1,155 +1,28 @@
 import fetch from 'node-fetch';
-import { Readable } from 'stream';
 
-export enum Command {
-  Auth = 'auth',
-  Action = 'action',
-  Error = 'error',
-  Authenticated = 'authenticated',
-  Denied = 'enied',
-  Resend = 'resend',
-  Approved = 'approved',
-  Processed = 'processed',
-  Forbidden = 'forbidden',
-  UnknownAction = 'unknownAction',
-  UnknownChannel = 'unknownChannel'
-}
+import Stream from './stream';
+import Action, { isActionOfType } from './action';
+import Meta from './meta';
+import Context from './context';
+import {
+  Command,
+  InputCommand,
+  ActionCommand,
+  isAuthCommand,
+  isActionCommand
+} from './command';
+import { NotImplemented, Unauthorized, NotAcceptable } from './exception';
 
-export type ActionCommand = [Command.Action, Action, Meta];
-export type ApprovedCommand = [Command.Approved, string];
-export type AuthCommand = [Command.Auth, string, string, string];
-export type AuthenticatedCommand = [Command.Authenticated, string];
-export type DeniedCommand = [Command.Denied, string];
-export type ErrorCommand = [Command.Error, string];
-export type ForbiddenCommand = [Command.Forbidden, string];
-export type ProcessedCommand = [Command.Processed, string];
-export type ResendCommand = [Command.Resend, string, Partial<Meta>];
-export type UnknownActionCommand = [Command.UnknownAction, string];
-export type UnknownChannelCommand = [Command.UnknownChannel, string];
-
-export type OutputCommand =
-  | ApprovedCommand
-  | AuthenticatedCommand
-  | DeniedCommand
-  | ErrorCommand
-  | ForbiddenCommand
-  | ProcessedCommand
-  | ResendCommand
-  | UnknownActionCommand
-  | UnknownChannelCommand;
-export type InputCommand = AuthCommand | ActionCommand;
-
-export function isAuthCommand(command: InputCommand): command is AuthCommand {
-  return command[0] === Command.Auth;
-}
-
-export function isActionCommand(
-  command: InputCommand
-): command is ActionCommand {
-  return command[0] === Command.Action;
-}
-
-export interface Meta {
-  id: string;
-  subprotocol: string;
-  time: number;
-  status: 'waiting' | 'processed' | 'error';
-  server: string;
-
-  channels?: string[];
-  users?: string[];
-  clients?: string[];
-  nodes?: string[];
-  reasons?: string[];
-}
-
-export interface Action {
-  type: string;
-}
+export * from './command';
+export { Meta, Action, Context, Stream };
 
 export interface SubscribeAction extends Action {
   type: 'logux/subscribe';
   channel: string;
 }
 
-export function isActionOfType<A extends Action>(
-  action: Action,
-  type: string
-): action is A {
-  return action.type === type;
-}
-
 export function isSubscribeAction(action: Action): action is SubscribeAction {
   return isActionOfType<SubscribeAction>(action, 'logux/subscribe');
-}
-
-export class Context {
-  nodeId: string;
-  userId: string;
-  clientId: string;
-  data: unknown;
-
-  constructor(meta: Meta) {
-    const parts = meta.id.split(' ')[1].split(':');
-
-    this.nodeId = parts.join(':');
-    this.userId = parts[0];
-    this.clientId = parts.slice(0, 2).join(':');
-  }
-
-  get isServer() {
-    return this.userId === 'server';
-  }
-}
-
-export class Stream extends Readable {
-  private _started = false;
-
-  constructor() {
-    super();
-    this.push('[');
-  }
-
-  _read() {}
-
-  add(command: OutputCommand) {
-    const chunk = JSON.stringify(command);
-    if (this._started) {
-      this.push(`,${chunk}`);
-    } else {
-      this.push(`${chunk}`);
-      this._started = true;
-    }
-  }
-
-  end() {
-    this.push(']');
-    this.push(null);
-  }
-}
-
-export class Unauthorized extends Error {
-  statusCode = 401;
-
-  constructor() {
-    super('Unauthorized');
-  }
-}
-
-export class NotAcceptable extends Error {
-  statusCode = 406;
-
-  constructor() {
-    super('Not Acceptable');
-  }
-}
-
-export class NotImplemented extends Error {
-  statusCode = 501;
-
-  constructor() {
-    super('Not Implemented');
-  }
 }
 
 export interface LoguxRequest {
