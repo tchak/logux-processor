@@ -4,7 +4,9 @@
 ![required node version](https://img.shields.io/node/v/logux-processor.svg)
 ![license](https://img.shields.io/npm/l/logux-processor.svg)
 
-Logux processor for node servers
+[Logux] processor for Node.js HTTP servers.
+
+[Logux]: https://github.com/logux/logux
 
 ## Motivation
 
