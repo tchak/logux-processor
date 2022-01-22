@@ -13,7 +13,7 @@
   "repository": "https://github.com/tchak/logux-processor",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^3.1.1"
   },
   "scripts": {
     "build": "rm -rf ./dist && tsc",
